@@ -142,10 +142,11 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val finalSorting = maxOf(firstSorting,c)
     val sum = a + b + c
     val doubleMultiplication = 2 * a * b * c / finalSorting
-    return if (((sqr( sum - finalSorting)) - doubleMultiplication > sqr(finalSorting)) && (sum > 2 * finalSorting )) 0
-    else if (((sqr( sum - finalSorting)) - doubleMultiplication == sqr(finalSorting)) && (sum > 2 * finalSorting)) 1
-    else if (((sqr( sum - finalSorting)) - doubleMultiplication < sqr(finalSorting)) && (sum > 2 * finalSorting)) 2
-    else -1
+    when {
+        (((sqr( sum - finalSorting)) - doubleMultiplication > sqr(finalSorting)) && (sum > 2 * finalSorting )) -> 0
+        (((sqr( sum - finalSorting)) - doubleMultiplication == sqr(finalSorting)) && (sum > 2 * finalSorting)) -> 1
+        (((sqr( sum - finalSorting)) - doubleMultiplication < sqr(finalSorting)) && (sum > 2 * finalSorting)) -> 2
+        else -> -1
 
 }
 
