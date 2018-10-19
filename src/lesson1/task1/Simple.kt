@@ -72,7 +72,7 @@ fun seconds(hours: Int, minutes: Int, seconds: Int): Int = hours * 3600 + minute
  */
 
 fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
-        ((sagenes * 48.0)  + (arshins * 16.0) + (vershoks) * 4.445) / 100
+        (((sagenes * 48.0)  + (arshins * 16.0) + (vershoks)) * 4.445) / 100
 
 
 
