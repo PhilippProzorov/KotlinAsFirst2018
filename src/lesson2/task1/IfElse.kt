@@ -64,11 +64,11 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String {
-    return if ((age % 100 > 10 && age % 100 < 21) || (age % 10 > 4 && age % 10 < 10) || (age % 10 == 0)) "$age лет"
-    else if (age % 10 == 1) "$age год"
-    else "$age года"
-}
+fun ageDescription(age: Int): String =
+        if (((age % 100) in 10 .. 20) || ((age) % 10 in 4 .. 10) || (age % 10 == 0)) "$age лет"
+        else if (age % 10 == 1) "$age год"
+        else "$age года"
+
 
 
 /**
@@ -122,9 +122,9 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int =
             when {
-                ((kingX != rookX) && (kingY != rookY)) && (abs((kingY - bishopY) / (kingX - bishopX))) != 1 -> 0
+                ((kingX != rookX) && (kingY != rookY)) && (abs((kingY - bishopY) / (abs(kingX - bishopX)))) != 1 -> 0
                 ((kingX == rookX) || (kingY == rookY)) && (abs((kingY - bishopY) / (kingX - bishopX))) != 1 -> 1
-                (abs(kingY - bishopY) / (kingX - bishopX)) == 1 && ((kingX != rookX) && (kingY != rookY)) -> 2
+                ((abs(kingY - bishopY)) == (abs(kingX - bishopX))) && ((kingX != rookX) && (kingY != rookY)) -> 2
                 else -> 3
             }
 
@@ -138,16 +138,18 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    val firstSorting = maxOf(a,b)
-    val finalSorting = maxOf(firstSorting,c)
+    val firstSorting = maxOf(a, b)
+    val finalSorting = maxOf(firstSorting, c)
     val sum = a + b + c
     val doubleMultiplication = 2 * a * b * c / finalSorting
-    return if (((sqr(sum - finalSorting)) - doubleMultiplication > sqr(finalSorting)) && (sum > 2 * finalSorting )) 0
-    else if (((sqr(sum - finalSorting)) - doubleMultiplication == sqr(finalSorting)) && (sum > 2 * finalSorting)) 1
-    else if (((sqr(sum - finalSorting)) - doubleMultiplication < sqr(finalSorting)) && (sum > 2 * finalSorting)) 2
+    val expFinalSorting = sqr(finalSorting)
+    val subtraction = (sqr(sum - finalSorting)) - doubleMultiplication
+    return if ((subtraction > expFinalSorting) && (sum > 2 * finalSorting)) 0
+    else if ((subtraction == expFinalSorting) && (sum > 2 * finalSorting)) 1
+    else if ((subtraction < expFinalSorting) && (sum > 2 * finalSorting)) 2
     else -1
-
 }
+
 
 
 /**
