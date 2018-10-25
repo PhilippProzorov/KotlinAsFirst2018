@@ -2,6 +2,12 @@
 package lesson3.task1
 
 import kotlin.math.sqrt
+import lesson1.task1.sqr
+import java.lang.Math.ceil
+import kotlin.math.abs
+import java.lang.Math.pow
+import kotlin.math.round
+import kotlin.math.*
 
 /**
  * Пример
@@ -69,11 +75,12 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     var counter = 1
     var number = n
-    do { if ((number / 10) > 0) {
-        counter++
+    do {
+        if ((number / 10) != 0) {
+            counter++
     }
         number /= 10
-    } while (number > 0)
+    } while (number != 0)
     return counter
 }
 
@@ -102,22 +109,30 @@ fun fib(n: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun lcm(m: Int, n: Int): Int {
+    var firstNumber = m
+    var secondNumber = n
+    val initialProduct = (firstNumber * secondNumber)
+    while ((firstNumber != 0) && (secondNumber != 0)) {
+        if (firstNumber > secondNumber) firstNumber %= secondNumber
+        else secondNumber %= firstNumber
+    }
+    val afterSum = firstNumber + secondNumber
+    return (initialProduct / afterSum)
+}
 /**
  * Простая
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var number = n
-    var minDiv = 2
     for (minDiv in 2..n) {
-        if (number % minDiv == 0) {
+        if (n % minDiv == 0) {
             return minDiv
             break
         }
     }
-    return minDiv
+    return n
 }
 
 /**
@@ -126,15 +141,13 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    var number = n
-    var maxDiv = n - 1
-    for (maxDivisor in (number - 1) downTo 1){
-        if (number % maxDiv == 0) {
+    for (maxDiv in (n - 1) downTo 1) {
+        if (n % maxDiv == 0) {
             return maxDiv
             break
         }
     }
-    return maxDiv
+    return n
 }
 
 /**
@@ -144,7 +157,16 @@ fun maxDivisor(n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = TODO()
+fun isCoPrime(m: Int, n: Int): Boolean {
+    var firstNumber = m
+    var secondNumber = n
+     while ((firstNumber != 0) && (secondNumber != 0)) {
+         if (firstNumber > secondNumber) firstNumber %= secondNumber
+         else secondNumber %= firstNumber
+     }
+    firstNumber += secondNumber
+    return firstNumber == 1
+}
 
 /**
  * Простая
@@ -153,8 +175,13 @@ fun isCoPrime(m: Int, n: Int): Boolean = TODO()
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
-
+fun squareBetweenExists(m: Int, n: Int): Boolean {
+    var outcome = 0
+    for (i in sqrt(m.toDouble()).toInt()..sqrt(n.toDouble()).toInt()) {
+       if (sqr(i) in m..n) outcome = 1
+    }
+    return outcome == 1
+}
 /**
  * Средняя
  *
@@ -171,7 +198,18 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int = TODO()
+fun collatzSteps(x: Int): Int {
+    var counter = 0
+    var collatzOverall = x
+    while (collatzOverall > 1) {
+        when {
+            ((collatzOverall % 2) == 0) -> collatzOverall /= 2
+            else -> collatzOverall = (3 * collatzOverall) + 1
+            }
+        counter++
+        }
+    return counter
+    }
 
 /**
  * Средняя
@@ -190,7 +228,6 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double = TODO()
-
 /**
  * Средняя
  *
@@ -198,7 +235,15 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var givenNumber = n
+    var reversedNumber = 0
+     do {
+        reversedNumber = (reversedNumber * 10 + (givenNumber % 10))
+            givenNumber /= 10
+        } while (givenNumber > 0)
+    return reversedNumber
+}
 
 /**
  * Средняя
@@ -209,7 +254,15 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    var palindromeCheck = n
+    var finalResult = 0
+    while (palindromeCheck > 0) {
+        finalResult = (finalResult * 10 ) + (palindromeCheck % 10)
+        palindromeCheck /= 10
+    }
+    return n == finalResult
+}
 
 /**
  * Средняя
@@ -219,7 +272,20 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    var number = n
+    var counter = 0
+    if (number < 10) return false
+    while (number > 10) {
+        if ((number % 10) != ((number % 100) / 10)) {
+            counter++
+            break
+        }
+        number /= 10
+    }
+    return counter == 1
+}
+
 
 /**
  * Сложная
@@ -230,7 +296,33 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var counter = 0
+    var numberOverall = 0
+    var initialSequence = 0
+    var sequenceNumber = 0
+    var sequenceFinal = 0
+    var finalDigit = 0
+     while (initialSequence < n){
+         sequenceNumber++
+         sequenceFinal = sqr(sequenceNumber)
+         counter = 1
+         numberOverall  = 10
+        while ((sequenceFinal / numberOverall) != 0) {
+            numberOverall *= 10
+            counter++
+        }
+        initialSequence += counter
+     }
+    initialSequence -= counter
+    numberOverall /= 10
+     while (initialSequence != n) {
+         finalDigit = (sequenceFinal / numberOverall) % 10
+         numberOverall /= 10
+         initialSequence++
+     }
+    return finalDigit
+}
 
 /**
  * Сложная
