@@ -78,7 +78,7 @@ fun digitNumber(n: Int): Int {
     do {
         if ((number / 10) != 0) {
             counter++
-    }
+        }
         number /= 10
     } while (number != 0)
     return counter
@@ -129,7 +129,6 @@ fun minDivisor(n: Int): Int {
     for (minDiv in 2..n) {
         if (n % minDiv == 0) {
             return minDiv
-            break
         }
     }
     return n
@@ -140,15 +139,8 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    for (maxDiv in (n - 1) downTo 1) {
-        if (n % maxDiv == 0) {
-            return maxDiv
-            break
-        }
-    }
-    return n
-}
+fun maxDivisor(n: Int): Int =
+        n / minDivisor(n)
 
 /**
  * Простая
@@ -205,11 +197,11 @@ fun collatzSteps(x: Int): Int {
         when {
             ((collatzOverall % 2) == 0) -> collatzOverall /= 2
             else -> collatzOverall = (3 * collatzOverall) + 1
-            }
-        counter++
         }
-    return counter
+        counter++
     }
+    return counter
+}
 
 /**
  * Средняя
@@ -218,7 +210,18 @@ fun collatzSteps(x: Int): Int {
  * sin(x) = x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    var adjustedX = x % (Math.PI * 2)
+    var initialSequence = 1
+    var step = 1.0
+    var result = 0.0
+    while (abs(pow(adjustedX, step) / factorial(step.toInt())) >= eps) {
+        result += initialSequence * pow(adjustedX, step) / factorial(step.toInt())
+        initialSequence *= -1
+        step += 2
+    }
+    return result
+}
 
 /**
  * Средняя
@@ -227,7 +230,19 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * cos(x) = 1 - x^2 / 2! + x^4 / 4! - x^6 / 6! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var adjustedX = x % (Math.PI * 2)
+    var initialSequence = 1
+    var step = 0.0
+    var result = 0.0
+    while (abs(pow(adjustedX, step) / factorial(step.toInt())) >= eps) {
+        result += initialSequence * pow(adjustedX, step) / factorial(step.toInt())
+        initialSequence *= -1
+        step += 2
+    }
+    return result
+}
+
 /**
  * Средняя
  *
@@ -238,10 +253,10 @@ fun cos(x: Double, eps: Double): Double = TODO()
 fun revert(n: Int): Int {
     var givenNumber = n
     var reversedNumber = 0
-     do {
+    do {
         reversedNumber = (reversedNumber * 10 + (givenNumber % 10))
-            givenNumber /= 10
-        } while (givenNumber > 0)
+        givenNumber /= 10
+    } while (givenNumber > 0)
     return reversedNumber
 }
 
@@ -303,24 +318,24 @@ fun squareSequenceDigit(n: Int): Int {
     var sequenceNumber = 0
     var sequenceFinal = 0
     var finalDigit = 0
-     while (initialSequence < n){
-         sequenceNumber++
-         sequenceFinal = sqr(sequenceNumber)
-         counter = 1
-         numberOverall  = 10
+    while (initialSequence < n){
+        sequenceNumber++
+        sequenceFinal = sqr(sequenceNumber)
+        counter = 1
+        numberOverall = 10
         while ((sequenceFinal / numberOverall) != 0) {
             numberOverall *= 10
             counter++
         }
         initialSequence += counter
-     }
+    }
     initialSequence -= counter
     numberOverall /= 10
-     while (initialSequence != n) {
-         finalDigit = (sequenceFinal / numberOverall) % 10
-         numberOverall /= 10
-         initialSequence++
-     }
+    while (initialSequence != n) {
+        finalDigit = (sequenceFinal / numberOverall) % 10
+        numberOverall /= 10
+        initialSequence++
+    }
     return finalDigit
 }
 
@@ -333,4 +348,30 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var counter = 0
+    var numberOverall = 0
+    var initialSequence = 0
+    var sequenceNumber = 0
+    var sequenceFinal = 0
+    var finalDigit = 0
+    while (initialSequence < n){
+        sequenceNumber++
+        sequenceFinal = fib(sequenceNumber)
+        counter = 1
+        numberOverall = 10
+        while ((sequenceFinal / numberOverall) != 0) {
+            numberOverall *= 10
+            counter++
+        }
+        initialSequence += counter
+    }
+    initialSequence -= counter
+    numberOverall /= 10
+    while (initialSequence != n) {
+        finalDigit = (sequenceFinal / numberOverall) % 10
+        numberOverall /= 10
+        initialSequence++
+    }
+    return finalDigit
+}
