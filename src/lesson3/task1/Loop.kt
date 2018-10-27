@@ -168,11 +168,10 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    var outcome = 0
     for (i in sqrt(m.toDouble()).toInt()..sqrt(n.toDouble()).toInt()) {
-       if (sqr(i) in m..n) outcome = 1
+       if (sqr(i) in m..n) return true
     }
-    return outcome == 1
+    return false
 }
 /**
  * Средняя
@@ -273,7 +272,7 @@ fun isPalindrome(n: Int): Boolean {
     var palindromeCheck = n
     var finalResult = 0
     while (palindromeCheck > 0) {
-        finalResult = (finalResult * 10 ) + (palindromeCheck % 10)
+        finalResult = (finalResult * 10) + (palindromeCheck % 10)
         palindromeCheck /= 10
     }
     return n == finalResult
@@ -311,33 +310,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int {
-    var counter = 0
-    var numberOverall = 0
-    var initialSequence = 0
-    var sequenceNumber = 0
-    var sequenceFinal = 0
-    var finalDigit = 0
-    while (initialSequence < n){
-        sequenceNumber++
-        sequenceFinal = sqr(sequenceNumber)
-        counter = 1
-        numberOverall = 10
-        while ((sequenceFinal / numberOverall) != 0) {
-            numberOverall *= 10
-            counter++
-        }
-        initialSequence += counter
-    }
-    initialSequence -= counter
-    numberOverall /= 10
-    while (initialSequence != n) {
-        finalDigit = (sequenceFinal / numberOverall) % 10
-        numberOverall /= 10
-        initialSequence++
-    }
-    return finalDigit
-}
+fun squareSequenceDigit(n: Int): Int = sequenceDigit(n, 1)
 
 /**
  * Сложная
@@ -348,16 +321,25 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int {
+fun fibSequenceDigit(n: Int): Int = sequenceDigit(n, 2)
+
+
+
+
+/**
+ Функция высшего (??) порядка для упрощения заданий squareSequenceDigit и fibSequenceDigit
+ **/
+fun sequenceDigit(n: Int, whichOne: Int): Int{
     var counter = 0
     var numberOverall = 0
     var initialSequence = 0
     var sequenceNumber = 0
     var sequenceFinal = 0
     var finalDigit = 0
-    while (initialSequence < n){
+    while (initialSequence < n) {
         sequenceNumber++
-        sequenceFinal = fib(sequenceNumber)
+        if (whichOne == 1) sequenceFinal = sqr(sequenceNumber)
+        else sequenceFinal = fib(sequenceNumber)
         counter = 1
         numberOverall = 10
         while ((sequenceFinal / numberOverall) != 0) {
