@@ -3,11 +3,9 @@ package lesson3.task1
 
 import kotlin.math.sqrt
 import lesson1.task1.sqr
-import java.lang.Math.ceil
 import kotlin.math.abs
 import java.lang.Math.pow
-import kotlin.math.round
-import kotlin.math.*
+
 
 /**
  * Пример
@@ -75,12 +73,12 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     var counter = 1
     var number = n
-    do {
+    while (number != 0) {
         if ((number / 10) != 0) {
             counter++
         }
         number /= 10
-    } while (number != 0)
+    }
     return counter
 }
 
@@ -210,13 +208,14 @@ fun collatzSteps(x: Int): Int {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double {
-    var adjustedX = x % (Math.PI * 2)
-    var initialSequence = 1
-    var step = 1.0
-    var result = 0.0
-    while (abs(pow(adjustedX, step) / factorial(step.toInt())) >= eps) {
-        result += initialSequence * pow(adjustedX, step) / factorial(step.toInt())
-        initialSequence *= -1
+    val adjustedX = x % (Math.PI * 2)
+    val initialSequence = -1
+    var step = 3.0
+    var result = adjustedX
+    var previousCalculations = adjustedX
+    while (abs(previousCalculations) >= eps) {
+        previousCalculations *= initialSequence * (sqr(adjustedX) / ((step - 1) * step))
+        result += previousCalculations
         step += 2
     }
     return result
@@ -230,13 +229,14 @@ fun sin(x: Double, eps: Double): Double {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double {
-    var adjustedX = x % (Math.PI * 2)
-    var initialSequence = 1
-    var step = 0.0
-    var result = 0.0
-    while (abs(pow(adjustedX, step) / factorial(step.toInt())) >= eps) {
-        result += initialSequence * pow(adjustedX, step) / factorial(step.toInt())
-        initialSequence *= -1
+    val adjustedX = x % (Math.PI * 2)
+    val initialSequence = -1
+    var step = 2
+    var previousCalculations = 1.0
+    var result = previousCalculations
+    while (abs(previousCalculations) >= eps) {
+        previousCalculations *= initialSequence * (sqr(adjustedX) / ((step - 1) * step))
+        result += previousCalculations
         step += 2
     }
     return result
@@ -310,7 +310,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = sequenceDigit(n, 1)
+fun squareSequenceDigit(n: Int): Int = sequenceDigit(n) { it * it }
 
 /**
  * Сложная
@@ -321,39 +321,28 @@ fun squareSequenceDigit(n: Int): Int = sequenceDigit(n, 1)
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = sequenceDigit(n, 2)
+fun fibSequenceDigit(n: Int): Int = sequenceDigit(n, ::fib)
 
 
 
 
 /**
- Функция высшего (??) порядка для упрощения заданий squareSequenceDigit и fibSequenceDigit
+ Сокращенная функция, содержащая лямбда-функцию для упрощения заданий squareSequenceDigit и fibSequenceDigit
+ Добавлена функция, вычисляющая количество цифр в n (digitNumber)
  **/
-fun sequenceDigit(n: Int, whichOne: Int): Int{
-    var counter = 0
-    var numberOverall = 0
-    var initialSequence = 0
-    var sequenceNumber = 0
+fun sequenceDigit(n: Int, f: (Int) -> Int): Int {
     var sequenceFinal = 0
-    var finalDigit = 0
+    var initialSequence = 0
+    var counter = 0
     while (initialSequence < n) {
-        sequenceNumber++
-        if (whichOne == 1) sequenceFinal = sqr(sequenceNumber)
-        else sequenceFinal = fib(sequenceNumber)
-        counter = 1
-        numberOverall = 10
-        while ((sequenceFinal / numberOverall) != 0) {
-            numberOverall *= 10
-            counter++
-        }
-        initialSequence += counter
+        counter++
+        sequenceFinal += digitNumber(f(counter))
     }
-    initialSequence -= counter
-    numberOverall /= 10
+    sequenceFinal = f(counter)
     while (initialSequence != n) {
-        finalDigit = (sequenceFinal / numberOverall) % 10
-        numberOverall /= 10
-        initialSequence++
+        sequenceFinal /= 10
+        initialSequence--
     }
-    return finalDigit
+    sequenceFinal %= 10
+    return sequenceFinal
 }
