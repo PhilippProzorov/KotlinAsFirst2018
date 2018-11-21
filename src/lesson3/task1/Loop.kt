@@ -231,7 +231,7 @@ fun sin(x: Double, eps: Double): Double {
 fun cos(x: Double, eps: Double): Double {
     val adjustedX = x % (Math.PI * 2)
     val initialSequence = -1
-    var step = 2
+    var step = 2.0
     var previousCalculations = 1.0
     var result = previousCalculations
     while (abs(previousCalculations) >= eps) {
