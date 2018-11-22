@@ -132,11 +132,11 @@ fun abs(v: List<Double>): Double {
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
 fun mean(list: List<Double>): Double =
-    when {
-        list.size == 0 -> 0.0
-        list.size == 1 -> list.sum()
-        else -> list.sum() / list.size
-    }
+        when {
+            list.size == 0 -> 0.0
+            list.size == 1 -> list.sum()
+            else -> list.sum() / list.size
+        }
 
 /**
  * Средняя
@@ -289,7 +289,7 @@ fun convertToString(n: Int, base: Int): String {
  */
 fun decimal(digits: List<Int>, base: Int): Int {
     var result = digits.reversed()[0].toDouble()
-    for (i in 1..(digits.reversed().size-1)) result += digits.reversed()[i] * pow(base.toDouble(), i.toDouble())
+    for (i in 1..(digits.reversed().size - 1)) result += digits.reversed()[i] * pow(base.toDouble(), i.toDouble())
     return result.toInt()
 }
 
@@ -325,7 +325,7 @@ fun roman(n: Int): String {
     var result = ""
     val arabNumber = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     val romanNumber = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
-    for (i in 0..((romanNumber.size)-1)) {
+    for (i in 0..(romanNumber.size - 1)) {
         while (number >= arabNumber[i]) {
             number -= arabNumber[i]
             result += romanNumber[i]
@@ -345,9 +345,12 @@ fun russian(n: Int): String {
     var number = n
     var result = ""
     val firstDigit = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val secondDigit = listOf<String>("десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
-    val exceptionsToSecond = listOf<String>("одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    val thirdDigit = listOf<String>("сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+    val secondDigit = listOf<String>("десять", "двадцать", "тридцать", "сорок", "пятьдесят",
+            "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
+    val exceptionsToSecond = listOf<String>("одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
+            "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
+    val thirdDigit = listOf<String>("сто", "двести", "триста", "четыреста",
+            "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val fourthDigit = listOf<String>("тысяча", "тысячи", "тысяч")
     val exceptionsToFourth = listOf<String>("одна", "две")
     val space = " "
@@ -371,8 +374,7 @@ fun russian(n: Int): String {
                 }
                 number %= 1000
             }
-        }
-        else {
+        } else {
             result += exceptionsToSecond[(number / 10000) + 7] + space
             if (number != 0) result += fourthDigit[2] + space
             else result += fourthDigit[2]
@@ -381,8 +383,8 @@ fun russian(n: Int): String {
     }
     if (number in 1000..9999) {
         when ((number / 1000) in 1..2) {
-            true -> result += exceptionsToFourth [(number / 1000) - 1] + space
-            else -> result += firstDigit[(number / 1000)-1] + space
+            true -> result += exceptionsToFourth[(number / 1000) - 1] + space
+            else -> result += firstDigit[(number / 1000) - 1] + space
         }
         result += when (number / 1000) {
             1 -> fourthDigit[0]
@@ -400,8 +402,7 @@ fun russian(n: Int): String {
         if ((number / 10) > 1) {
             result += secondDigit[(number / 10) - 1] + space
             number %= 10
-        }
-        else {
+        } else {
             result += exceptionsToSecond[(number % 10) - 1]
             number = 0
         }
