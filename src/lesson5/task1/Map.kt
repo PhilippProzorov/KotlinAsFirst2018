@@ -3,6 +3,7 @@
 package lesson5.task1
 
 import cucumber.api.java.uk.Нехай
+import lesson4.task1.isPalindrome
 import lesson4.task1.mean
 
 /**
@@ -198,8 +199,6 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
     return cheapestItem
 }
 
-//DONE./REMOVE AFTER OVERALL CHECK//
-
 /**
  * Сложная
  *
@@ -300,7 +299,18 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun hasAnagrams(words: List<String>): Boolean {
+    var outcome = false
+    val wordsRecomposed = mutableMapOf<String, List<Char>>()
+    for (word in words) {
+        when (wordsRecomposed.containsValue(word.toList().sorted())) {
+            true -> outcome = true
+            else -> wordsRecomposed[word] = word.toList().sorted()
+        }
+    }
+    return outcome
+}
+
 /**
  * Сложная
  *
