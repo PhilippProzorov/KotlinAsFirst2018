@@ -2,8 +2,6 @@
 
 package lesson5.task1
 
-import cucumber.api.java.uk.Нехай
-import lesson4.task1.isPalindrome
 import lesson4.task1.mean
 
 /**
@@ -165,12 +163,18 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    var result = mutableMapOf<String, Double>()
+    val result = mutableMapOf<String, Double>()
+    var newStockPrices = mutableMapOf<String, MutableList<Double>>()
     for ((stock, price) in stockPrices) {
-        result = stockPrices.groupBy({ it.first }, { it.second }).mapValuesTo(result) { mean(it.value) }
+        newStockPrices.getOrPut(stock) { mutableListOf() }
+        newStockPrices[stock]!!.add(price)
+    }
+    for ((stock, prices) in newStockPrices) {
+        result[stock] = mean(prices)
     }
     return result
 }
+
 
 /**
  * Средняя
@@ -189,10 +193,10 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var cheapestItem: String? = null
-    var maxPrice = Double.MAX_VALUE
+    var minPrice = Double.MAX_VALUE
     for ((item, info) in stuff) {
-        if ((info.first == kind) && (info.second < maxPrice)) {
-            maxPrice = info.second
+        if ((info.first == kind) && (info.second < minPrice)) {
+            minPrice = info.second
             cheapestItem = item
         }
     }
@@ -223,7 +227,27 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val result = mutableMapOf<String, MutableSet<String>>()
+    for ((person, friend) in friends) {
+        result[person] = friend.toMutableSet()
+        for (name in friend) {
+            if (!result.contains(name)) result[name] = mutableSetOf()
+        }
+    }
+    for ((personOne, personTwo) in result) {
+        val setOfFriends = mutableSetOf<String>()
+        while (personTwo != setOfFriends) {
+            for (person in (personTwo.minus(setOfFriends))) {
+                if (person in friends) personTwo += friends[person]!!.minus(personOne)
+                setOfFriends.add(person)
+            }
+        }
+        result[personOne] = personTwo
+    }
+    return result
+}
+
 
 /**
  * Простая
@@ -263,7 +287,11 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = (a.intersect(
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = chars.toSet().containsAll(word.toSet())
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    val newChars = chars.toSet()
+    val newWord = word.toSet()
+    return newChars.containsAll(newWord)
+}
 
 
 /**

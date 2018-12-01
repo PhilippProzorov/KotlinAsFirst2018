@@ -168,8 +168,7 @@ fun times(a: List<Double>, b: List<Double>): Double {
             result += a[i] * b[i]
         }
         return result
-    }
-    else return result
+    } else return result
 }
 
 /**
@@ -307,7 +306,7 @@ fun decimalFromString(str: String, base: Int): Int {
     for (i in str) {
         when (i in 'a'..'z') {
             true -> digits.add(i - 'a' + 10)
-            else -> digits.add(i.toInt())
+            else -> digits.add(i - '0')
         }
     }
     return decimal(digits, base)
