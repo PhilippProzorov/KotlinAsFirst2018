@@ -229,9 +229,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, MutableSet<String>>()
-    for ((person, friend) in friends) {
-        result[person] = friend.toMutableSet()
-        for (name in friend) {
+    for ((personOne, personTwo) in friends) {
+        result[personOne] = personTwo.toMutableSet()
+        for (name in personTwo) {
             if (!result.contains(name)) result[name] = mutableSetOf()
         }
     }
