@@ -141,16 +141,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    var outcome = false
-    val mutableA = mutableMapOf<String, String>()
-    mutableA.putAll(a)
-    for ((key, value) in b) {
-        if ((a[key] == value) && (a.contains(key))) mutableA.remove(key)
-        if (mutableA.isEmpty()) outcome = true
-    }
-    return outcome
-}
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = a.all { (key, value) -> b[key] == value }
 
 /**
  * Средняя
@@ -164,7 +155,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val result = mutableMapOf<String, Double>()
-    var newStockPrices = mutableMapOf<String, MutableList<Double>>()
+    val newStockPrices = mutableMapOf<String, MutableList<Double>>()
     for ((stock, price) in stockPrices) {
         newStockPrices.getOrPut(stock) { mutableListOf() }
         newStockPrices[stock]!!.add(price)
@@ -356,8 +347,10 @@ fun hasAnagrams(words: List<String>): Boolean {
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
+
+//!!ФУНКЦИЯ ПРОХОДИТ ТЕСТЫ, НО ПОКА ЧТО НЕ СООТВЕТСТВУЕТ ДОЛЖНОЙ ЭФФЕКТИВНОСТИ!!//
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    val pair = mutableMapOf(-1 to -1)
+    val pair = mutableMapOf<Int, Int>()
     for (i in 0..(list.size - 1)) {
         when ((number - list[i]) in pair) {
             true -> return pair[number - list[i]]!! to i

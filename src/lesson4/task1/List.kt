@@ -343,13 +343,14 @@ fun roman(n: Int): String {
 fun russian(n: Int): String {
     var number = n
     var result = ""
-    val firstDigit = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val firstDigit = listOf<String>("один", "два", "три", "четыре", "пять",
+            "шесть", "семь", "восемь", "девять")
     val secondDigit = listOf<String>("десять", "двадцать", "тридцать", "сорок", "пятьдесят",
             "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
-    val exceptionsToSecond = listOf<String>("одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
-            "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    val thirdDigit = listOf<String>("сто", "двести", "триста", "четыреста",
-            "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+    val exceptionsToSecond = listOf<String>("одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
+            "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
+    val thirdDigit = listOf<String>("сто", "двести", "триста", "четыреста", "пятьсот",
+            "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val fourthDigit = listOf<String>("тысяча", "тысячи", "тысяч")
     val exceptionsToFourth = listOf<String>("одна", "две")
     val space = " "
@@ -363,21 +364,32 @@ fun russian(n: Int): String {
         number %= 100000
     }
     if (number in 10000..99999) {
-        if (number / 10000 > 1) {
-            result += secondDigit[(number / 10000) - 1] + space
-            number %= 10000
-            if ((number % 10000) / 1000 == 0) {
+        when {
+            number / 10000 > 1 -> {
+                result += secondDigit[(number / 10000) - 1] + space
+                number %= 10000
+                if ((number % 10000) / 1000 == 0) {
+                    when (number % 10000 != 0) {
+                        true -> result += fourthDigit[2] + space
+                        else -> result += fourthDigit[2]
+                    }
+                    number %= 1000
+                }
+            }
+            number / 1000 == 10 -> {
                 when (number % 10000 != 0) {
-                    true -> result += fourthDigit[2] + space
-                    else -> result += fourthDigit[2]
+                    true -> result += secondDigit[0] + space + fourthDigit[2] + space
+                    else -> result += secondDigit[0] + space + fourthDigit[2]
                 }
                 number %= 1000
             }
-        } else {
-            result += exceptionsToSecond[(number / 10000) + 7] + space
-            if (number != 0) result += fourthDigit[2] + space
-            else result += fourthDigit[2]
-            number %= 1000
+            else -> {
+                result += exceptionsToSecond[(number / 10000) + 7] + space
+                if (number != 0) result += fourthDigit[2] + space
+                else result += fourthDigit[2]
+                number %= 1000
+            }
+
         }
     }
     if (number in 1000..9999) {
@@ -398,13 +410,20 @@ fun russian(n: Int): String {
         number %= 100
     }
     if (number in 10..99) {
-        if ((number / 10) > 1) {
-            result += secondDigit[(number / 10) - 1] + space
-            number %= 10
-        } else {
-            result += exceptionsToSecond[(number % 10) - 1]
-            number = 0
+        when {
+            number / 10 > 1 -> {
+                result += secondDigit[(number / 10) - 1] + space
+                number %= 10
+            }
+            number == 10 -> {
+                result += secondDigit [0]
+            }
+            else -> {
+                result += exceptionsToSecond[(number % 10) - 1]
+                number = 0
+            }
         }
+
     }
     if (number in 1..9) {
         result += firstDigit[number - 1]

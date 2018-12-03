@@ -337,7 +337,7 @@ fun sequenceDigit(n: Int, f: (Int) -> Int): Int {
     var counter = 0
     while (initialSequence < n) {
         counter++
-        sequenceFinal += digitNumber(f(counter))
+        initialSequence += digitNumber(f(counter))
     }
     sequenceFinal = f(counter)
     while (initialSequence != n) {
