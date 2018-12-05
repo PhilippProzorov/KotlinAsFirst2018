@@ -354,6 +354,7 @@ fun russian(n: Int): String {
     val fourthDigit = listOf<String>("тысяча", "тысячи", "тысяч")
     val exceptionsToFourth = listOf<String>("одна", "две")
     val space = " "
+//////////////////////////////////////////////////////
     if (number in 100000..999999) {
         result +=(thirdDigit[(number / 100000) - 1]) + space
         if (number % 100000 / 1000 == 0)
@@ -363,6 +364,7 @@ fun russian(n: Int): String {
             }
         number %= 100000
     }
+//////////////////////////////////////////////////////
     if (number in 10000..99999) {
         when {
             number / 10000 > 1 -> {
@@ -384,14 +386,16 @@ fun russian(n: Int): String {
                 number %= 1000
             }
             else -> {
-                result += exceptionsToSecond[(number / 10000) + 7] + space
-                if (number != 0) result += fourthDigit[2] + space
-                else result += fourthDigit[2]
+                result += exceptionsToSecond[((number / 1000) % 10) - 1] + space
+                when (number % 1000 != 0) {
+                    true -> result += fourthDigit[2] + space
+                    else -> result += fourthDigit[2]
+                }
                 number %= 1000
             }
-
         }
     }
+//////////////////////////////////////////////////////
     if (number in 1000..9999) {
         when ((number / 1000) in 1..2) {
             true -> result += exceptionsToFourth[(number / 1000) - 1] + space
@@ -405,14 +409,22 @@ fun russian(n: Int): String {
         number %= 1000
         if (number != 0) result += space
     }
+/////////////////////////////////////////////////////
     if (number in 100..999) {
-        result += thirdDigit[(number / 100) - 1] + space
+        when (number % 100 != 0) {
+            true -> result += thirdDigit[(number / 100) - 1] + space
+            else -> result += thirdDigit[(number / 100) - 1]
+        }
         number %= 100
     }
+//////////////////////////////////////////////////////
     if (number in 10..99) {
         when {
             number / 10 > 1 -> {
-                result += secondDigit[(number / 10) - 1] + space
+                when (number % 10 != 0) {
+                    true -> result += secondDigit[(number / 10) - 1] + space
+                    else -> result += secondDigit[(number / 10) - 1]
+                }
                 number %= 10
             }
             number == 10 -> {
@@ -425,6 +437,7 @@ fun russian(n: Int): String {
         }
 
     }
+
     if (number in 1..9) {
         result += firstDigit[number - 1]
     }
