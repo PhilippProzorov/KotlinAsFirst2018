@@ -63,7 +63,8 @@ fun main(args: Array<String>) {
 /**
  * Список месяцев для заданий dateStrToDigit и dateDigitToStr
  */
-val months = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря")
+val months = listOf("января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря")
 
 
 /**
@@ -79,11 +80,25 @@ val months = listOf("января", "февраля", "марта", "апрел�
  */
 fun dateStrToDigit(str: String): String {
     val partition = str.split(" ")
-    if ((partition.size != 3) || (months.indexOf(partition[1]) < 0)) return ""
-    if (daysInMonth(months.indexOf(partition[1]) + 1, partition[2].toInt()) > partition[0].toInt()) {
-        return String.format("%02d.%02d.%s", partition[0].toInt(), months.indexOf(partition[1]) + 1, partition[2])
-    } else return ""
+    val incorrect = Regex("""[^\d]""")
+    try {
+        if ((partition.size != 3) ||
+                (partition[0].contains(incorrect)) ||
+                (partition[1] !in months) ||
+                (partition[2].contains(incorrect))) return ""
+        val day = partition[0].toInt()
+        val month = partition[1]
+        val year = partition[2]
+        val indexOfMonth = months.indexOf(month) + 1
+        if (daysInMonth(indexOfMonth, year.toInt()) >= day) {
+            return String.format("%02d.%02d.%s", day, indexOfMonth, year)
+        }
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    return ""
 }
+
 /**
  * Средняя
  *
@@ -95,18 +110,24 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    var month = ""
     val partition = digital.split(".")
-    if (digital.matches(Regex("""[0-9]+.[0-9]+.[0-9]+"""))) {
-        for (i in (1..months.size)) {
-            if (i == partition[1].toInt()) month = months[i - 1]
+    val requirements = Regex("""[0-9]+.[0-9]+.[0-9]+""")
+    try {
+        if (digital.matches(requirements)) {
+            if (partition[1].toInt() != 0) {
+                val day = partition[0].toInt()
+                val month = months[partition[1].toInt() - 1]
+                val year = partition[2].toInt()
+                return String.format("%d %s %d", day, month, year)
+            }
         }
-        if (digital.split(".")[1].toInt() != 0) {
-            return String.format("%d %s %d", partition[0].toInt(), month, partition[2].toInt())
-        } else return ""
-    } else return ""
+    } catch (e: NumberFormatException) {
+        return ""
+    } catch (e: ArrayIndexOutOfBoundsException) {
+        return ""
+    }
+    return ""
 }
-
 
 /**
  * Средняя
@@ -124,6 +145,7 @@ fun flattenPhoneNumber(phone: String) =
         if (phone.replace(Regex("""[-\s]"""), "")
                         .matches(Regex("""(^(\+(?=\d+)|\d)\d*(\(\d+\))?\d*\d$)|(\d)""")))
             phone.replace(Regex("""[^+\d]"""), "") else ""
+
 /**
  * Средняя
  *
@@ -137,12 +159,14 @@ fun flattenPhoneNumber(phone: String) =
 fun bestLongJump(jumps: String): Int {
     val partition = jumps.split(" ")
     var longestJump = -1
-    for (i in 0..(partition.size - 1)) {
+    for (part in partition) {
         val foul = Regex("""[^\d%-]""")
         val success = Regex("""\d""")
-        if (partition[i].contains(foul)) return -1
+        if (part.contains(foul)) return -1
         else {
-            if ((partition[i].contains(success)) && (partition[i].toInt() > longestJump)) longestJump = partition[i].toInt()
+            if ((part.contains(success)) && (part.toInt() > longestJump)) {
+                longestJump = part.toInt()
+            }
         }
     }
     return longestJump
@@ -163,7 +187,9 @@ fun bestHighJump(jumps: String): Int {
     var highestJump = -1
     for (i in 1..(partition.size - 1) step 2) {
         val jump = partition[i - 1].toInt()
-        if (partition[i].contains("+") && (jump > highestJump)) highestJump = jump
+        if (partition[i].contains("+") && (jump > highestJump)) {
+            highestJump = jump
+        }
     }
     return highestJump
 }
@@ -179,20 +205,26 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     val partition = expression.split(" ")
+    val requirements = Regex("""\d+(\s[-+]\s\d+)*""")
     var sum = partition[0].toInt()
-    if (!expression.matches(Regex("""\d+(\s[-+]\s\d+)*"""))) throw IllegalArgumentException()
+    if (!expression.matches(requirements)) {
+        throw IllegalArgumentException()
+        throw NumberFormatException()
+    }
     for (i in 1..(partition.size - 1) step 2) {
+        val member = partition[i + 1].toInt()
         when (partition[i] == "+") {
-            true -> sum += partition[i + 1].toInt()
+            true -> {
+                sum += member
+            }
             else -> {
-                if (partition[i] == "-") sum -= partition[i + 1].toInt()
-                else throw IllegalArgumentException(expression)
+                if (partition[i] == "-") sum -= member
+                else throw IllegalArgumentException()
             }
         }
     }
     return sum
 }
-
 
 /**
  * Сложная
@@ -217,24 +249,25 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    val semicolon = description.split("; ")
+    val semicolon = description.split(";")
     var mostExpensive = ""
     var max = 0.0
     try {
-        for (i in 0..(semicolon.size - 1)) {
-            val partition = semicolon[i].split(" ")
-            if (partition[partition.size - 1].toDouble() >= max) {
-                max = partition[partition.size - 1].toDouble()
+        for (priceTag in semicolon) {
+            val partition = priceTag.split(" ")
+            val price = (partition[partition.size - 1]).toDouble()
+            if (price >= max) {
+                max = price
                 mostExpensive = ""
-                for (j in 0..(partition.size - 2)) mostExpensive += partition[j]
+                for (product in 0..(partition.size - 2)) {
+                    mostExpensive += partition[product]
+                }
             }
         }
-        return mostExpensive
-    } catch (e: IndexOutOfBoundsException) {
-        return ""
     } catch (e: NumberFormatException) {
         return ""
     }
+    return mostExpensive
 }
 
 /**
@@ -248,9 +281,30 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
-//    val arabNumbers = listOf(1000, 500, 100, 50, 10, 5, 1)
-//    val romanNumbers = listOf('M', 'D', 'C', 'L', 'X', 'V', 'I')
+fun fromRoman(roman: String): Int {
+    var cached = 0
+    var result = 0
+    val numbers = mapOf("M" to 1000, "D" to 500, "C" to 100,
+            "L" to 50, "X" to 10, "V" to 5, "I" to 1)
+    try {
+        for (number in roman) {
+            val romanDigit = number.toString()
+            if (numbers.containsKey(romanDigit)) {
+                var current = numbers[romanDigit]!!
+                when (current > cached) {
+                    true -> result += current - (2 * cached)
+                    else -> result += numbers[romanDigit]!!
+                }
+                cached = numbers[romanDigit]!!
+            } else {
+                throw IllegalArgumentException()
+            }
+        }
+    } catch (e: IllegalArgumentException) {
+        return -1
+    }
+    return result
+}
 
 
 /**
