@@ -54,7 +54,24 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val reader = File(inputName).bufferedReader()
+            .readLines().joinToString("\n").toLowerCase()
+    val elementCount = mutableMapOf<String, Int>()
+    for (substring in substrings) {
+        val currentElement = Regex(substring.toLowerCase())
+        elementCount[substring] = 0
+        var matchResult = currentElement.find(reader)
+        while (matchResult != null) {
+            elementCount[substring] = (elementCount[substring] ?: 0) + 1
+            matchResult = currentElement.find(reader,
+                    matchResult.range.first + 1)
+        }
+    }
+    return elementCount
+}
+
+
 
 
 /**
@@ -71,8 +88,31 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val reader = File(inputName).bufferedReader().readLines()
+    val writer = File(outputName).bufferedWriter()
+    var symbol = ""
+    for (read in reader) {
+        for (letter in read) {
+            val same = symbol + letter
+            val letterCondition = Regex("""[жшчщ][ыяю]""",
+                    RegexOption.IGNORE_CASE)
+            val proper =
+                    if (letterCondition.matches(same))
+                        when (letter.toLowerCase()) {
+                            'ы' -> letter - 19
+                            'я' -> letter - 31
+                            'ю' -> letter - 11
+                            else -> throw IllegalArgumentException()
+                        }
+                    else letter
+            writer.write(proper.toString())
+            symbol = letter.toString()
+        }
+        writer.newLine()
+    }
+    writer.close()
 }
+
 
 /**
  * Средняя
@@ -92,7 +132,17 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val reader = File(inputName).bufferedReader().readLines()
+    val maxLength = reader.map { it.trim().length }.max()
+    val writer = File(outputName).bufferedWriter()
+    for (read in reader) {
+        var string = read.trim()
+        val strHalved = (maxLength?.minus(string.length))?.div(2)
+        for (i in 0..((strHalved)!!.minus(1))) string = " " + string
+        writer.write(string)
+        writer.newLine()
+    }
+    writer.close()
 }
 
 /**
@@ -145,7 +195,6 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  *
  */
 fun top20Words(inputName: String): Map<String, Int> = TODO()
-
 /**
  * Средняя
  *
