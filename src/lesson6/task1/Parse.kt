@@ -113,11 +113,12 @@ fun dateDigitToStr(digital: String): String {
     val partition = digital.split(".")
     val requirements = Regex("""[0-9]+.[0-9]+.[0-9]+""")
     try {
-        if (digital.matches(requirements)) {
-            if (partition[1].toInt() != 0) {
-                val day = partition[0].toInt()
-                val month = months[partition[1].toInt() - 1]
-                val year = partition[2].toInt()
+        if (digital.matches(requirements) && partition[1].toInt() != 0) {
+            val day = partition[0].toInt()
+            val month = months[partition[1].toInt() - 1]
+            val indexOfMonth = months.indexOf(month) + 1
+            val year = partition[2].toInt()
+            if (daysInMonth(indexOfMonth, year) >= day) {
                 return String.format("%d %s %d", day, month, year)
             }
         }
@@ -209,7 +210,6 @@ fun plusMinus(expression: String): Int {
     var sum = partition[0].toInt()
     if (!expression.matches(requirements)) {
         throw IllegalArgumentException()
-        throw NumberFormatException()
     }
     for (i in 1..(partition.size - 1) step 2) {
         val member = partition[i + 1].toInt()
@@ -235,7 +235,17 @@ fun plusMinus(expression: String): Int {
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val partition = str.toLowerCase().split("")
+    var index = 0
+    for (position in 0..(partition.size - 2)) {
+        if (partition[position + 1] == partition[position])
+            return index
+        index += partition[position].length + 1
+    }
+    return -1
+}
+
 
 /**
  * Сложная
@@ -287,19 +297,21 @@ fun fromRoman(roman: String): Int {
     val numbers = mapOf("M" to 1000, "D" to 500, "C" to 100,
             "L" to 50, "X" to 10, "V" to 5, "I" to 1)
     try {
-        for (number in roman) {
-            val romanDigit = number.toString()
-            if (numbers.containsKey(romanDigit)) {
-                var current = numbers[romanDigit]!!
-                when (current > cached) {
-                    true -> result += current - (2 * cached)
-                    else -> result += numbers[romanDigit]!!
+        if (roman.isNotEmpty()) {
+            for (number in roman) {
+                val romanDigit = number.toString()
+                if (numbers.containsKey(romanDigit)) {
+                    var current = numbers[romanDigit]!!
+                    when (current > cached) {
+                        true -> result += current - (2 * cached)
+                        else -> result += numbers[romanDigit]!!
+                    }
+                    cached = numbers[romanDigit]!!
+                } else {
+                    throw IllegalArgumentException()
                 }
-                cached = numbers[romanDigit]!!
-            } else {
-                throw IllegalArgumentException()
             }
-        }
+        } else return -1
     } catch (e: IllegalArgumentException) {
         return -1
     }

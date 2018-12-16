@@ -60,8 +60,8 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val elementCount = mutableMapOf<String, Int>()
     for (substring in substrings) {
         val currentElement = Regex(substring.toLowerCase())
-        elementCount[substring] = 0
         var matchResult = currentElement.find(reader)
+        elementCount[substring] = 0
         while (matchResult != null) {
             elementCount[substring] = (elementCount[substring] ?: 0) + 1
             matchResult = currentElement.find(reader,
@@ -70,6 +70,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     }
     return elementCount
 }
+
 
 
 
@@ -137,8 +138,8 @@ fun centerFile(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (read in reader) {
         var string = read.trim()
-        val strHalved = (maxLength?.minus(string.length))?.div(2)
-        for (i in 0..((strHalved)!!.minus(1))) string = " " + string
+        val stringHalved = (maxLength?.minus(string.length))!!.div(2)
+        for (i in 0..((stringHalved).minus(1))) string = " " + string
         writer.write(string)
         writer.newLine()
     }
@@ -194,7 +195,19 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): Map<String, Int> = TODO()
+fun top20Words(inputName: String): Map<String, Int> {
+    val reader = File(inputName).bufferedReader().readLines()
+    val topTwenty = mutableMapOf<String, Int>()
+    if (reader.isNotEmpty()) {
+        val text = reader.joinToString(" ").toLowerCase()
+        val excess = Regex("""[^a-zA-Zа-яА-ЯёЁ]+""")
+        for (read in text.split(excess)) {
+            topTwenty[read] = (topTwenty[read] ?: 0) + 1
+        }
+    }
+    topTwenty.toList().sortedByDescending { it.second }.take(20).toMap()
+    return topTwenty
+}
 /**
  * Средняя
  *
@@ -231,8 +244,30 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+    val reader = File(inputName).bufferedReader().readLines()
+    val writer = File(outputName).bufferedWriter()
+    var outcome = true
+    for (read in reader) {
+        for (position in 0..(read.length - 1)) {
+            val replacementUp = dictionary[read[position].toUpperCase()]
+            val replacementLow = dictionary[read[position].toLowerCase()]
+            var string = read[position].toString()
+            if ((replacementUp != null) || (replacementLow != null)) {
+                string = replacementUp?.toLowerCase() ?: replacementLow?.toLowerCase() ?: " "
+            }
+            when (outcome) {
+                true -> {
+                    string = string.capitalize()
+                    outcome = false
+                }
+            }
+            writer.write(string)
+        }
+        writer.newLine()
+    }
+    writer.close()
 }
+
 
 /**
  * Средняя
@@ -261,7 +296,6 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     TODO()
 }
-
 /**
  * Сложная
  *
